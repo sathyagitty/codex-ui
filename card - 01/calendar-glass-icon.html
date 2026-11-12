@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Glass Calendar Icon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --muted: #8C948A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center; align-content: center; gap: 56px;
+    padding: 40px 16px; background: var(--bg);
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  }
+
+  /* ---------- Icon (sized by --s; design grid is 120 × 122 units) ---------- */
+  .icon {
+    --s: 240px;
+    --u: calc(var(--s) / 120);
+    position: relative; width: var(--s); height: calc(var(--u) * 122);
+    animation: bob 4.5s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(calc(var(--u) * -3)) } }
+
+  /* back panel — green */
+  .back {
+    position: absolute; left: 0; right: 0; top: calc(var(--u) * 6); height: calc(var(--u) * 60);
+    border-radius: calc(var(--u) * 16);
+    background: linear-gradient(180deg, #A6EE92 0%, #86DE72 55%, #6ED25E 100%);
+  }
+
+  /* binder rings — frosted tabs */
+  .ring {
+    position: absolute; top: 0; width: calc(var(--u) * 10); height: calc(var(--u) * 16);
+    border-radius: calc(var(--u) * 4); z-index: 3;
+    background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.45));
+    border: 1px solid rgba(255,255,255,.9);
+    box-shadow: 0 calc(var(--u) * 1.5) calc(var(--u) * 3) rgba(40,110,40,.18);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  .ring.l { left: calc(var(--u) * 26); }
+  .ring.r { right: calc(var(--u) * 26); }
+
+  /* front panel — mint frosted glass */
+  .glass {
+    position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--u) * 94);
+    border-radius: calc(var(--u) * 18); overflow: hidden; z-index: 2;
+    background: linear-gradient(180deg, rgba(190,238,178,.70) 0%, rgba(212,243,204,.80) 45%, rgba(236,250,232,.92) 100%);
+    backdrop-filter: blur(12px) saturate(1.3); -webkit-backdrop-filter: blur(12px) saturate(1.3);
+    border: 1px solid rgba(255,255,255,.85);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.9),
+      0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(60,130,60,.14);
+  }
+  .glass::after {
+    content: ""; position: absolute; inset: -20% auto -20% -60%; width: 40%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent);
+    transform: skewX(-18deg); animation: sweep 5s ease-in-out infinite; pointer-events: none;
+  }
+  @keyframes sweep { 0%, 60% { left: -60% } 100% { left: 130% } }
+
+  /* ---------- 4 × 3 dot grid ---------- */
+  .grid {
+    position: absolute; inset: calc(var(--u) * 14) calc(var(--u) * 12) calc(var(--u) * 12);
+    display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr);
+    place-items: center;
+  }
+  .cell {
+    position: relative; width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%;
+    background: linear-gradient(160deg, rgba(255,255,255,.55), rgba(220,245,214,.35));
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.7), 0 calc(var(--u) * 1) calc(var(--u) * 3) rgba(70,150,70,.16);
+  }
+  .cell::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #FFFFFF 55%, #F1F6F0);
+    box-shadow: 0 0 calc(var(--u) * 6) rgba(255,255,255,.9), 0 calc(var(--u) * 1.5) calc(var(--u) * 3) rgba(60,130,60,.18);
+    transform: scale(0); opacity: 0;
+    transition: transform .4s cubic-bezier(.34,1.8,.64,1), opacity .25s ease;
+  }
+  .cell.on::before { transform: scale(1); opacity: 1; }
+  .cell.out::before { transform: scale(.4); opacity: 0; transition: transform .3s ease-in, opacity .3s ease-in; }
+
+  /* check badge — pops when grid is full */
+  .check {
+    position: absolute; right: calc(var(--u) * -8); top: calc(var(--u) * 20); z-index: 4;
+    width: calc(var(--u) * 26); height: calc(var(--u) * 26); border-radius: 50%;
+    background: linear-gradient(160deg, #FFFFFF, #EEF5EC);
+    border: 1px solid rgba(255,255,255,.95);
+    box-shadow: 0 calc(var(--u) * 5) calc(var(--u) * 12) rgba(60,130,60,.22);
+    display: grid; place-items: center;
+    transform: scale(0); transition: transform .5s cubic-bezier(.34,1.8,.64,1);
+  }
+  .check svg { width: 58%; height: 58%; }
+  .check path { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset .35s ease .25s; }
+  .icon.done .check { transform: scale(1); }
+  .icon.done .check path { stroke-dashoffset: 0; }
+
+  /* ---------- showcase ---------- */
+  .sizes { display: flex; align-items: flex-end; gap: 36px; flex-wrap: wrap; justify-content: center; }
+  .sizes figure { margin: 0; display: grid; justify-items: center; gap: 10px; }
+  .sizes figcaption { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .icon.md { --s: 96px; }
+  .icon.sm { --s: 56px; }
+</style>
+</head>
+<body>
+
+<template id="tpl">
+  <div class="back"></div>
+  <span class="ring l"></span><span class="ring r"></span>
+  <div class="glass"><div class="grid"></div></div>
+  <div class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#3FA34D" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+</template>
+
+<div class="icon" data-icon></div>
+
+<div class="sizes">
+  <figure><div class="icon md" data-icon></div><figcaption>96 px</figcaption></figure>
+  <figure><div class="icon sm" data-icon></div><figcaption>56 px</figcaption></figure>
+</div>
+
+<script>
+  const CELLS = 12;          // 4 × 3
+  const STEP = 300;          // ms between dots filling
+  const HOLD = 1400;         // ms to hold when full
+  const tpl = document.getElementById('tpl');
+
+  const icons = [...document.querySelectorAll('[data-icon]')].map(el => {
+    el.append(tpl.content.cloneNode(true));
+    const grid = el.querySelector('.grid');
+    for (let i = 0; i < CELLS; i++) grid.append(Object.assign(document.createElement('div'), { className: 'cell' }));
+    return { el, cells: [...grid.children] };
+  });
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function set(n) {   // fill the first n dots, row by row
+    icons.forEach(({ el, cells }) => {
+      cells.forEach((c, i) => { c.classList.remove('out'); c.classList.toggle('on', i < n); });
+      el.classList.toggle('done', n === CELLS);
+    });
+  }
+
+  async function loop() {
+    for (;;) {
+      for (let n = 1; n <= CELLS; n++) { set(n); await wait(STEP); }
+      await wait(HOLD);
+      icons.forEach(({ el, cells }) => {
+        el.classList.remove('done');
+        cells.forEach((c, i) => setTimeout(() => c.classList.add('out'), (CELLS - 1 - i) * 25));
+      });
+      await wait(CELLS * 25 + 450);
+      icons.forEach(({ cells }) => cells.forEach(c => c.classList.remove('on', 'out')));
+      await wait(300);
+    }
+  }
+
+  loop();
+</script>
+</body>
+</html>

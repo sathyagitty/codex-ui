@@ -1,0 +1,50 @@
+.slide-sheet-root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.slide-sheet-root.is-open {
+  pointer-events: auto;
+}
+
+.slide-sheet-scrim {
+  position: absolute;
+  inset: 0;
+}
+
+.slide-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 496px;
+  background: #fff;
+  border-radius: 32px 32px 0 0;
+  box-shadow:
+    0 -7px 34px 0 rgba(58, 58, 58, 0.04),
+    0 -2px 11.4px 0 rgba(155, 155, 155, 0.1);
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.slide-sheet-root.is-open .slide-sheet {
+  transform: translateY(0);
+}
+
+.slide-sheet-close {
+  position: absolute;
+  top: 37px;
+  right: 42px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.slide-sheet-close img {
+  display: block;
+}

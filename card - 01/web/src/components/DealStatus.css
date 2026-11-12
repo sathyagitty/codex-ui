@@ -1,0 +1,64 @@
+.deal-status {
+  height: 100%;
+  padding: 0 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.deal-status__icon {
+  position: relative;
+  width: 98px;
+  height: 100px;
+}
+
+.deal-status__calendar,
+.deal-status__tick {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.28s ease, transform 0.36s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.deal-status__tick {
+  width: 98px;
+  height: 98px;
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.deal-status__tick path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.deal-status.is-done .deal-status__calendar {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+.deal-status.is-done .deal-status__tick {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.deal-status.is-done .deal-status__tick path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.32s ease 0.24s;
+}
+
+.deal-status__text {
+  margin: 54px 0 0;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #4b4a4a;
+  transition: transform 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.28s ease;
+}
+
+.deal-status.is-done .deal-status__text {
+  transform: translateY(40px);
+  opacity: 0;
+}

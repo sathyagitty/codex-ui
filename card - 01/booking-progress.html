@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Booking Progress Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #EEF1FB;
+    --card: #FFFFFF;
+    --ink: #1B1F3B;
+    --muted: #7A81A6;
+    --line: #E4E8F7;
+    --brand: #5B6CFF;
+    --brand-deep: #3F4FD9;
+    --brand-soft: #E3E7FF;
+    --sun: #FFC94D;
+    --sun-deep: #E9A92A;
+    --coral: #FF7A59;
+    --mint: #22C38E;
+    --mint-deep: #129A6D;
+    --block: #FFFFFF;
+    --block-side: #C8D0F4;
+    --grid: #E7EBFA;
+    --blob-a: #DCE2FF;
+    --blob-b: #FFE9D6;
+    --shadow: 0 30px 60px -20px rgba(43, 54, 128, .28), 0 8px 18px -8px rgba(43, 54, 128, .12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1226; --card: #181C36; --ink: #F1F3FF; --muted: #9AA0C7; --line: #2A2F52;
+      --brand-soft: #2A3170; --block: #EEF1FF; --block-side: #7F8BD6; --grid: #DDE2F8;
+      --blob-a: #262D66; --blob-b: #3A2B3A;
+      --shadow: 0 30px 60px -20px rgba(0,0,0,.6), 0 8px 18px -8px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1226; --card: #181C36; --ink: #F1F3FF; --muted: #9AA0C7; --line: #2A2F52;
+    --brand-soft: #2A3170; --block: #EEF1FF; --block-side: #7F8BD6; --grid: #DDE2F8;
+    --blob-a: #262D66; --blob-b: #3A2B3A;
+    --shadow: 0 30px 60px -20px rgba(0,0,0,.6), 0 8px 18px -8px rgba(0,0,0,.4);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    padding: 32px 16px; background: var(--bg); color: var(--ink);
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  }
+
+  .card {
+    width: 100%; max-width: 380px; background: var(--card);
+    border-radius: 28px; box-shadow: var(--shadow); overflow: hidden;
+  }
+
+  /* ---------- Icon stage ---------- */
+  .stage {
+    position: relative; height: 240px; display: grid; place-items: center;
+    background:
+      radial-gradient(60% 70% at 30% 35%, var(--blob-a), transparent 70%),
+      radial-gradient(50% 60% at 78% 70%, var(--blob-b), transparent 70%);
+  }
+  .stage svg { width: 250px; height: 230px; overflow: visible; }
+
+  .float { animation: float 4s ease-in-out infinite; transform-origin: 120px 120px; }
+  .shadow-blob { animation: shadow 4s ease-in-out infinite; transform-origin: 120px 200px; }
+  @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+  @keyframes shadow { 0%,100% { transform: scaleX(1); opacity: .22 } 50% { transform: scaleX(.86); opacity: .14 } }
+
+  .ticket { transition: transform .8s cubic-bezier(.34,1.56,.64,1); transform: translate(-46px, 18px) rotate(0deg); }
+  .s2 .ticket, .s3 .ticket, .s4 .ticket { transform: translate(0, 0) rotate(-10deg); }
+  .ticket g.inner { transform-box: fill-box; }
+
+  .date-hi { transform-box: fill-box; transform-origin: center; animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1) } 50% { transform: scale(1.18) } }
+
+  .badge { transform-box: fill-box; transform-origin: center; transform: scale(0); transition: transform .55s cubic-bezier(.34,1.8,.64,1); }
+  .s4 .badge { transform: scale(1); }
+  .badge .tick { stroke-dasharray: 30; stroke-dashoffset: 30; transition: stroke-dashoffset .45s ease .35s; }
+  .s4 .badge .tick { stroke-dashoffset: 0; }
+
+  .coin { transform-box: fill-box; transform-origin: center; transform: scale(0) rotate(-40deg); transition: transform .5s cubic-bezier(.34,1.8,.64,1); }
+  .s3 .coin { transform: scale(1) rotate(0); }
+  .coin-spin { transform-box: fill-box; transform-origin: center; animation: spin 2.4s linear infinite; }
+  @keyframes spin { 0% { transform: scaleX(1) } 50% { transform: scaleX(.25) } 100% { transform: scaleX(1) } }
+
+  .spark { transform-box: fill-box; transform-origin: center; animation: twinkle 2.2s ease-in-out infinite; }
+  .spark:nth-of-type(2) { animation-delay: .7s; }
+  .spark:nth-of-type(3) { animation-delay: 1.4s; }
+  @keyframes twinkle { 0%,100% { transform: scale(.4) rotate(0); opacity: .3 } 50% { transform: scale(1) rotate(45deg); opacity: 1 } }
+
+  .trail { stroke-dasharray: 4 6; animation: dash 1.2s linear infinite; }
+  @keyframes dash { to { stroke-dashoffset: -20 } }
+
+  /* ---------- Body ---------- */
+  .body { padding: 6px 24px 24px; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); }
+  .route { display: flex; align-items: center; gap: 10px; margin: 6px 0 2px; font-size: 22px; font-weight: 800; }
+  .route .arrow { color: var(--muted); font-weight: 600; }
+  .meta { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); font-weight: 500; }
+  .thumb { width: 34px; height: 34px; border-radius: 10px; object-fit: cover; background: var(--brand-soft); flex: none; }
+
+  .status { display: flex; justify-content: space-between; align-items: baseline; margin: 20px 0 10px; }
+  .status-text { font-size: 14px; font-weight: 700; min-height: 1.2em; }
+  .status-text span { display: inline-block; animation: rise .4s ease; }
+  @keyframes rise { from { transform: translateY(6px); opacity: 0 } to { transform: none; opacity: 1 } }
+  .pct { font-size: 13px; font-weight: 800; color: var(--brand); font-variant-numeric: tabular-nums; }
+
+  .bar { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
+  .bar-fill {
+    height: 100%; width: 0; border-radius: inherit;
+    background: linear-gradient(90deg, var(--brand), #8A7BFF 60%, var(--coral));
+    background-size: 200% 100%;
+    transition: width .9s cubic-bezier(.65,0,.35,1);
+    animation: sheen 2.4s linear infinite;
+  }
+  @keyframes sheen { to { background-position: -200% 0 } }
+
+  .steps { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); position: relative; }
+  .steps::before { content: ""; position: absolute; top: 15px; left: 12.5%; right: 12.5%; height: 2px; background: var(--line); }
+  .steps .track { position: absolute; top: 15px; left: 12.5%; height: 2px; width: 0; background: var(--brand); transition: width .9s cubic-bezier(.65,0,.35,1); }
+  .step { position: relative; display: grid; justify-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; color: var(--muted); text-align: center; }
+  .dot {
+    width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--card); border: 2px solid var(--line); color: var(--muted); z-index: 1;
+    transition: background .35s, border-color .35s, color .35s, transform .35s, box-shadow .35s;
+  }
+  .dot svg { width: 15px; height: 15px; }
+  .dot .ok { display: none; }
+  .step.done .dot { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 4px 0 var(--brand-deep); }
+  .step.done .dot .ico { display: none; }
+  .step.done .dot .ok { display: block; }
+  .step.active .dot { border-color: var(--brand); color: var(--brand); transform: translateY(-2px); box-shadow: 0 0 0 6px var(--brand-soft); }
+  .step.done, .step.active { color: var(--ink); }
+
+  .actions { display: flex; gap: 10px; margin-top: 22px; }
+  .btn {
+    flex: 1; border: 0; border-radius: 14px; padding: 13px 14px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+    background: var(--brand); color: #fff; box-shadow: 0 4px 0 var(--brand-deep); transition: transform .15s, box-shadow .15s;
+  }
+  .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--brand-deep); }
+  .btn.ghost { flex: none; background: var(--brand-soft); color: var(--brand); box-shadow: none; }
+  .btn.ghost:active { transform: translateY(1px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="card" id="card">
+  <div class="stage" aria-hidden="true">
+    <svg viewBox="0 0 240 220" id="icon">
+      <defs>
+        <clipPath id="ticketClip"><rect x="0" y="0" width="74" height="96" rx="10"/></clipPath>
+      </defs>
+
+      <!-- ground shadow -->
+      <ellipse class="shadow-blob" cx="120" cy="200" rx="74" ry="9" fill="#2B3680" opacity=".2"/>
+
+      <!-- flight trail + plane -->
+      <path id="flight" class="trail" d="M28 120 C 30 40, 210 20, 214 96" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+
+      <g class="float">
+        <!-- ticket (behind calendar) -->
+        <g class="ticket" style="transform-origin: 170px 120px">
+          <g transform="translate(140 62)">
+            <rect x="6" y="6" width="74" height="96" rx="10" fill="var(--sun-deep)"/>
+            <rect x="0" y="0" width="74" height="96" rx="10" fill="var(--sun)"/>
+            <g clip-path="url(#ticketClip)">
+              <rect x="0" y="0" width="74" height="54" fill="#FFB547"/>
+              <circle cx="54" cy="18" r="8" fill="#FFF3C9"/>
+              <!-- mountain -->
+              <path d="M6 54 L34 20 L62 54 Z" fill="#5B6CFF"/>
+              <path d="M34 20 L62 54 L44 54 Z" fill="#3F4FD9"/>
+              <path d="M26 30 L34 20 L42 30 L38 28 L34 32 L30 28 Z" fill="#FFFFFF"/>
+            </g>
+            <!-- perforation -->
+            <line x1="8" y1="62" x2="66" y2="62" stroke="#FFF3C9" stroke-width="2.5" stroke-dasharray="3 4" stroke-linecap="round"/>
+            <rect x="12" y="72" width="34" height="5" rx="2.5" fill="#FFF3C9"/>
+            <rect x="12" y="82" width="22" height="5" rx="2.5" fill="#FFF3C9" opacity=".7"/>
+          </g>
+        </g>
+
+        <!-- calendar block -->
+        <g transform="translate(46 58)">
+          <rect x="10" y="10" width="112" height="110" rx="18" fill="var(--block-side)"/>
+          <rect x="0" y="0" width="112" height="110" rx="18" fill="var(--block)"/>
+          <path d="M18 0 H94 A18 18 0 0 1 112 18 V32 H0 V18 A18 18 0 0 1 18 0 Z" fill="var(--brand)"/>
+          <rect x="0" y="28" width="112" height="4" fill="var(--brand-deep)"/>
+          <!-- binder rings -->
+          <rect x="26" y="-10" width="10" height="22" rx="5" fill="var(--brand-deep)"/>
+          <rect x="76" y="-10" width="10" height="22" rx="5" fill="var(--brand-deep)"/>
+          <rect x="26" y="-10" width="10" height="16" rx="5" fill="#8A97FF"/>
+          <rect x="76" y="-10" width="10" height="16" rx="5" fill="#8A97FF"/>
+          <!-- grid -->
+          <g fill="var(--grid)">
+            <rect x="14" y="44" width="16" height="14" rx="4"/>
+            <rect x="36" y="44" width="16" height="14" rx="4"/>
+            <rect x="58" y="44" width="16" height="14" rx="4"/>
+            <rect x="80" y="44" width="16" height="14" rx="4"/>
+            <rect x="14" y="64" width="16" height="14" rx="4"/>
+            <rect x="36" y="64" width="16" height="14" rx="4"/>
+            <rect x="80" y="64" width="16" height="14" rx="4"/>
+            <rect x="14" y="84" width="16" height="14" rx="4"/>
+            <rect x="36" y="84" width="16" height="14" rx="4"/>
+            <rect x="58" y="84" width="16" height="14" rx="4"/>
+          </g>
+          <rect class="date-hi" x="58" y="64" width="16" height="14" rx="4" fill="var(--coral)"/>
+        </g>
+
+        <!-- payment coin (stage 3) -->
+        <g transform="translate(30 132)"><g class="coin">
+          <g class="coin-spin">
+            <circle cx="16" cy="19" r="16" fill="var(--sun-deep)"/>
+            <circle cx="16" cy="16" r="16" fill="var(--sun)"/>
+            <circle cx="16" cy="16" r="10" fill="none" stroke="#FFF3C9" stroke-width="2.5"/>
+            <path d="M16 10 V22 M12.5 13 H18 A2.5 2.5 0 0 1 18 18 H14 A2.5 2.5 0 0 0 14 23 H19.5" stroke="#FFF3C9" stroke-width="2" fill="none" stroke-linecap="round" transform="translate(0 -0.5) scale(1 .9)"/>
+          </g>
+        </g></g>
+
+        <!-- confirm badge (stage 4) -->
+        <g transform="translate(142 128)"><g class="badge">
+          <circle cx="22" cy="26" r="22" fill="var(--mint-deep)"/>
+          <circle cx="22" cy="22" r="22" fill="var(--mint)"/>
+          <path class="tick" d="M12 22 L19 29 L32 15" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g></g>
+      </g>
+
+      <!-- plane flies along trail -->
+      <g>
+        <g transform="translate(-11 -9)">
+          <path d="M2 9 L22 2 L15 18 L11 12 Z" fill="var(--coral)"/>
+          <path d="M11 12 L22 2 L13 11 Z" fill="#E0573A"/>
+          <path d="M11 12 L13 11 L12 16 Z" fill="#C9472D"/>
+        </g>
+        <animateMotion dur="5s" repeatCount="indefinite" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1">
+          <mpath href="#flight"/>
+        </animateMotion>
+      </g>
+
+      <!-- sparkles -->
+      <g fill="var(--sun)">
+        <path class="spark" d="M200 40 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 Z"/>
+        <path class="spark" d="M30 70 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 Z" fill="var(--brand)"/>
+        <path class="spark" d="M214 150 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 Z" fill="var(--coral)"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="body">
+    <div class="eyebrow">Booking progress</div>
+    <div class="route">Tokyo <span class="arrow">→</span> Mt. Fuji</div>
+    <div class="meta">
+      <img class="thumb" src="assets/mt%20fuji.jpeg" alt="" onerror="this.style.display='none'" />
+      <span>Fri, 4 Dec · 2 travellers · Kawaguchiko</span>
+    </div>
+
+    <div class="status">
+      <div class="status-text" id="statusText"><span>Starting…</span></div>
+      <div class="pct" id="pct">0%</div>
+    </div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+
+    <ol class="steps" id="steps">
+      <div class="track" id="track"></div>
+      <li class="step"><div class="dot">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>
+        <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>
+      </div>Search</li>
+      <li class="step"><div class="dot">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>
+        <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>
+      </div>Select</li>
+      <li class="step"><div class="dot">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h4"/></svg>
+        <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>
+      </div>Payment</li>
+      <li class="step"><div class="dot">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg>
+        <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>
+      </div>Confirmed</li>
+    </ol>
+
+    <div class="actions">
+      <button class="btn" id="nextBtn">Continue</button>
+      <button class="btn ghost" id="replayBtn" aria-label="Replay animation">↻</button>
+    </div>
+  </div>
+</article>
+
+<script>
+  const card = document.getElementById('card');
+  const steps = [...document.querySelectorAll('.step')];
+  const statusText = document.getElementById('statusText');
+  const pct = document.getElementById('pct');
+  const barFill = document.getElementById('barFill');
+  const track = document.getElementById('track');
+  const nextBtn = document.getElementById('nextBtn');
+
+  const labels = [
+    'Finding the best trains…',
+    'Searched 48 routes',
+    'Seats & date selected',
+    'Processing payment…',
+    'Booking confirmed! 🎉'
+  ];
+
+  let stage = 0, timer = null, shown = 0;
+
+  function countTo(target) {
+    const start = shown, t0 = performance.now(), d = 900;
+    (function tick(now) {
+      const p = Math.min(1, (now - t0) / d);
+      shown = Math.round(start + (target - start) * (1 - Math.pow(1 - p, 3)));
+      pct.textContent = shown + '%';
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  function render() {
+    card.className = 'card s' + stage;
+    const value = stage * 25;
+    barFill.style.width = value + '%';
+    track.style.width = (Math.min(stage, 3) / 3 * 75) + '%';
+    steps.forEach((el, i) => {
+      el.classList.toggle('done', i < stage);
+      el.classList.toggle('active', i === stage);
+    });
+    statusText.innerHTML = '<span>' + labels[stage] + '</span>';
+    countTo(value);
+    nextBtn.textContent = stage === 4 ? 'View ticket' : 'Continue';
+  }
+
+  function go(n) { stage = n; render(); }
+
+  function autoplay() {
+    clearInterval(timer);
+    go(0);
+    timer = setInterval(() => {
+      if (stage < 4) go(stage + 1);
+      else setTimeout(() => go(0), 1200);
+    }, 1700);
+  }
+
+  nextBtn.addEventListener('click', () => { clearInterval(timer); go(stage < 4 ? stage + 1 : 0); });
+  document.getElementById('replayBtn').addEventListener('click', autoplay);
+
+  autoplay();
+</script>
+</body>
+</html>
