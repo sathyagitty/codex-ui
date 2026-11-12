@@ -12,21 +12,34 @@
   position: relative;
   width: 98px;
   height: 100px;
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* caption slides away, so settle the badge into the vertical centre */
+.deal-status.is-done .deal-status__icon {
+  transform: translateY(57px);
 }
 
 .deal-status__calendar,
-.deal-status__tick {
+.deal-status__tick,
+.deal-status__rays {
   position: absolute;
   top: 0;
   left: 0;
-  transition: opacity 0.28s ease, transform 0.36s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.deal-status__calendar {
+  transform-origin: 50% 55%;
 }
 
 .deal-status__tick {
-  width: 98px;
-  height: 98px;
+  top: -20px;
+  left: -20px;
+  width: 138px;
+  height: 138px;
   opacity: 0;
-  transform: scale(0.6);
+  transform: scale(0);
+  transform-origin: 50% 50%;
 }
 
 .deal-status__tick path {
@@ -34,19 +47,78 @@
   stroke-dashoffset: 1;
 }
 
-.deal-status.is-done .deal-status__calendar {
-  opacity: 0;
-  transform: scale(0.7);
+/* spark rays — long pills every 60deg, dots in between */
+.deal-status__rays {
+  width: 98px;
+  height: 98px;
+  pointer-events: none;
 }
 
+.deal-status__ray {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 18px;
+  margin: -9px 0 0 -3.5px;
+  border-radius: 4px;
+  background: #6ed25e;
+  opacity: 0;
+  transform: rotate(var(--a)) translateY(-54px) scale(0.2);
+}
+
+.deal-status__ray.is-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #a6ee92;
+}
+
+/* 1. calendar warps in the middle and collapses into the disc */
+.deal-status.is-done .deal-status__calendar {
+  animation: ds-warp 0.5s cubic-bezier(0.5, 0, 0.6, 1) forwards;
+}
+
+@keyframes ds-warp {
+  0% { transform: scale(1, 1); opacity: 1; filter: blur(0); border-radius: 0; }
+  35% { transform: scale(1.12, 0.72) skewX(-6deg); opacity: 1; filter: blur(0.5px); }
+  70% { transform: scale(0.55, 0.95) skewX(4deg); opacity: 0.8; filter: blur(2px); }
+  100% { transform: scale(0.2); opacity: 0; filter: blur(5px); }
+}
+
+/* 2. green disc expands with overshoot */
 .deal-status.is-done .deal-status__tick {
   opacity: 1;
-  transform: scale(1);
+  animation: ds-expand 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) 0.28s forwards;
 }
 
+@keyframes ds-expand {
+  0% { transform: scale(0.15); }
+  60% { transform: scale(1.18); }
+  80% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+/* 3. spark burst */
+.deal-status.is-done .deal-status__ray {
+  animation: ds-spark 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) 0.5s forwards;
+}
+
+.deal-status.is-done .deal-status__ray.is-dot {
+  animation-delay: 0.58s;
+}
+
+@keyframes ds-spark {
+  0% { opacity: 0; transform: rotate(var(--a)) translateY(-54px) scale(0.2); }
+  35% { opacity: 1; transform: rotate(var(--a)) translateY(-90px) scale(1); }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(-104px) scale(0.5); }
+}
+
+/* 4. tick draws along its stroke path */
 .deal-status.is-done .deal-status__tick path {
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 0.32s ease 0.24s;
+  transition: stroke-dashoffset 0.4s cubic-bezier(0.5, 0, 0.2, 1) 0.8s;
 }
 
 .deal-status__text {

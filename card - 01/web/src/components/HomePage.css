@@ -77,3 +77,13 @@
   letter-spacing: -2%;
   cursor: pointer;
 }
+
+.cta-button.is-reserved {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0;
+  background: #fff;
+  cursor: default;
+}

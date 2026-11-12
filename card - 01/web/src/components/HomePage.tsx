@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import SlideSheet from './SlideSheet';
 import DealStatus from './DealStatus';
+import doneIcon from '../../assets/done.svg';
 import bg from '../../assets/bg.jpg';
 import './HomePage.css';
 
 export default function HomePage() {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [reserved, setReserved] = useState(false);
 
   return (
     <div className="home-page">
@@ -20,10 +22,20 @@ export default function HomePage() {
             <span className="pill">3N / 4D Stay</span>
             <span className="pill">Guest Favorite</span>
           </div>
-          <button className="cta-button" onClick={() => setSheetOpen(true)}>Reserve Now</button>
+          <button
+            className={`cta-button${reserved ? ' is-reserved' : ''}`}
+            onClick={() => setSheetOpen(true)}
+            disabled={reserved}
+          >
+            {reserved && <img src={doneIcon} alt="" width={28} height={28} />}
+            {reserved ? 'Reserved' : 'Reserve Now'}
+          </button>
         </div>
         <SlideSheet open={sheetOpen} onClose={() => setSheetOpen(false)}>
-          <DealStatus active={sheetOpen} />
+          <DealStatus active={sheetOpen} onFinish={() => {
+            setSheetOpen(false);
+            setReserved(true);
+          }} />
         </SlideSheet>
       </div>
     </div>
